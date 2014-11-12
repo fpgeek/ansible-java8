@@ -7,16 +7,16 @@
 #  sudo: yes
 
 - name: add add-apt-repostory
-  apt: pkg=software-properties-common state=present update_cache=yes
+  apt: name=software-properties-common state=present update_cache=yes
   sudo: yes 
-    
+
 - name: add add-apt-repostory
-  apt: pkg=python-software-properties state=present update_cache=yes
+  apt: name=python-software-properties state=present update_cache=yes
   sudo: yes 
   when: ansible_distribution_release == "precise"
 
 - name: add webupd8 ppa
-  shell: add-apt-repository ppa:webupd8team/java -y
+  apt_repository: repo='ppa:webupd8team/java'
   sudo: yes
 
 - name: update
@@ -28,5 +28,8 @@
   sudo: yes
 
 - name: install java8
-  shell: apt-get install -y oracle-java8-installer ca-certificates
+  apt: name={{ item }} state=present update_cache=yes
   sudo: yes
+  with_items:
+    - oracle-java8-installer
+    - ca-certificates
