@@ -6,27 +6,37 @@
 #  shell: apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EEA14886
 #  sudo: yes
 
+- name: check java has installed
+  shell: which java
+  register: installed_java
+  ignore_errors: yes
+
 - name: add add-apt-repostory
   apt: name=software-properties-common state=present update_cache=yes
-  sudo: yes 
+  sudo: yes
+  when: installed_java|failed
 
 - name: add add-apt-repostory
   apt: name=python-software-properties state=present update_cache=yes
   sudo: yes 
-  when: ansible_distribution_release == "precise"
+  when: ansible_distribution_release == "precise" and installed_java|failed
 
 - name: add webupd8 ppa
   apt_repository: repo='ppa:webupd8team/java'
   sudo: yes
+  when: installed_java|failed
 
 - name: update
   shell: apt-get update
   sudo: yes
+  when: installed_java|failed
 
 - name: auto accept oracle jdk license
   shell: echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
   sudo: yes
+  when: installed_java|failed
 
 - name: install java8
-  shell: apt-get install -y oracle-java8-installer ca-certificates
+  shell: apt-get -y install oracle-java8-installer ca-certificates
   sudo: yes
+  when: installed_java|failed
