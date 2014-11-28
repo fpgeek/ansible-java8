@@ -22,7 +22,7 @@
   when: ansible_distribution_release == "precise" and installed_java|failed
 
 - name: add webupd8 ppa
-  apt_repository: repo='ppa:webupd8team/java'
+  apt_repository: repo='ppa:webupd8team/java' validate_certs=no
   sudo: yes
   when: installed_java|failed
 
